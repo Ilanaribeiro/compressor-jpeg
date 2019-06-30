@@ -7,6 +7,6 @@ def rgb2ycrcb(rgb_image):
     return y, cr, cb
     
 
-def ycrcv2rgb(y, cr, cb):
+def ycrcb2rgb(y, cr, cb):
     imgYCC = cv2.merge([y, cr, cb])
     return cv2.cvtColor(imgYCC, cv2.COLOR_YCR_CB2BGR)
