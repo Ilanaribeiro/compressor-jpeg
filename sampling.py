@@ -14,13 +14,13 @@ def downsample(image, factor):
         return image[::2, ::2]
 
 
-def upsample(image):
+def upsample(image, original_image_shape):
     """
     Upsample a image with scipy.interpolate.griddata
     """
-    line, column = image.shape
-    vals = np.reshape(image, (line * column))
-    pts = np.array([[i, j] for i in np.linspace(0, 1, line) for j in np.linspace(0, 1, column)])
-    original_image_shape = 8j
-    grid_x, grid_y = np.mgrid[0:1:original_image_shape, 0:1:original_image_shape]
-    return interpolate.griddata(pts, vals, (grid_x, grid_y), method='linear')
+    nlines, ncolumns = image.shape
+    original_nlines, original_ncolumns = original_image_shape
+    vals = np.reshape(image, (nlines * ncolumns))
+    pts = np.array([[i, j] for i in np.linspace(0, 1, nlines) for j in np.linspace(0, 1, ncolumns)])
+    grid_x, grid_y = np.mgrid[0:1:complex(0, original_nlines), 0:1:complex(0, original_ncolumns)]
+    return interpolate.griddata(pts, vals, (grid_x, grid_y), method='linear').astype("uint8")
