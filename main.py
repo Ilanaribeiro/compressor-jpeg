@@ -1,30 +1,50 @@
 import cv2
-import numpy
 
+import colorspaces
+import sampling
 import reshape
+import dct
 
-image = cv2.imread("wom16.jpg", 0)
+image = cv2.imread("dog.jpeg")
 
-imagem_blocos = reshape.divide_image(image, 8, 8)
-imagem_reconstruida = reshape.rebuild_image(imagem_blocos, image.shape[0], image.shape[1])
+y, cr, cb = colorspaces.rgb2ycrcb(image)
 
-imf = numpy.float32(imagem_blocos[0])/255.0  # float conversion/scale
-dct = cv2.dct(imf)                  # the dct
-idct = cv2.idct(dct)
-img_dct = numpy.uint8((idct * 255.0))    # convert back
+original_image_shape = y.shape
+downsample_factor = (4, 4, 4)
 
-# print imagem
-print("image original")
-print(image)
-print("image blocos")
-print(imagem_blocos)
+print("Initializing downsampling")
+downsampled_cr = sampling.downsample(cr, downsample_factor)
+downsampled_cb = sampling.downsample(cb, downsample_factor)
 
-print("dct")
-print(dct)
-print(idct)
-print(img_dct)
-print(imagem_blocos[0])
-print()
+y_blocks = reshape.divide_image(y, 8, 8)
+cr_blocks = reshape.divide_image(downsampled_cr, 8, 8)
+cb_blocks = reshape.divide_image(downsampled_cb, 8, 8)
+# TODO Adicionar tratamento para divisão de imagens não múltiplas de 8.
+# TODO Levar em consideração o downsample com todos os fatores
 
-print("image reconstruida")
-print(imagem_reconstruida)
+y_dct_blocks, cr_dct_blocks, cb_dct_blocks = dct.dct_from_ycrcb_blocks(y_blocks, cr_blocks, cb_blocks)
+
+
+# TODO Quantização da imagem entra aqui. @João
+# https://en.wikipedia.org/wiki/Quantization_(image_processing)#Quantization_matrices
+
+y_idct_blocks, cr_idct_blocks, cb_idct_blocks = dct.idct_from_ycrcb_dct_blocks(y_dct_blocks, cr_dct_blocks, cb_dct_blocks)
+
+
+y_idct_image = reshape.rebuild_image(y_idct_blocks, original_image_shape)
+cr_idct_image = reshape.rebuild_image(cr_idct_blocks, original_image_shape)
+cb_idct_image = reshape.rebuild_image(cb_idct_blocks, original_image_shape)
+
+
+print("Initializing upsampling")
+upsampled_cr = sampling.upsample(cr_idct_image, original_image_shape)
+print("Done upsampling cr")
+upsampled_cb = sampling.upsample(cb_idct_image, original_image_shape)
+print("Done upsampling cb")
+
+image2 = colorspaces.ycrcb2rgb(y, upsampled_cr, upsampled_cb)
+
+cv2.imshow('image', image)
+cv2.imshow('image2', image2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
