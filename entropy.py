@@ -2,6 +2,7 @@ import numpy
 
 from itertools import chain
 
+
 def zigzag_ordering(block):
     """
     Zigzag ordering in entropy coding
@@ -15,16 +16,29 @@ def zigzag_ordering(block):
             sum = r+c 
             if(sum%2 == 0):     
                 #add at beginning 
-                solution[sum].insert(0,matrix[r][c]) 
+                solution[sum].insert(0,block[r][c]) 
             else:     
                 #add at end of the list 
-                solution[sum].append(matrix[r][c])
+                solution[sum].append(block[r][c])
 
     return list(chain.from_iterable(solution))
     
+ 
+def get_symbols(ordered_list):
+    """
+    Get a list of tuples of AC coefficients and number of zero before said coefficient.
+    """
+    zerocounter = 0
+    symbols = []
+    ac_list = ordered_list.copy()
+    ac_list.pop(0) # Remove DC coefficient from list - first item
 
-matrix = numpy.arange(64).reshape((8,8))
-ordered_list = zigzag_ordering(matrix)
+    for n in ac_list:
+        if(n == 0):
+            zerocounter += 1
+        else:
+            symbols.append((zerocounter, n))
+            zerocounter = 0
 
-print(matrix)
-print(ol)
+    symbols.append((0, 0)) # EOB
+    return symbols
