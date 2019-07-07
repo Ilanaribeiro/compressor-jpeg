@@ -1,3 +1,5 @@
+import numpy as np
+
 def divide_image(arr, nrows, ncols):
     """
     Return an array of shape (n, nrows, ncols) where
@@ -7,9 +9,11 @@ def divide_image(arr, nrows, ncols):
     each subblock preserving the "physical" layout of arr.
     """
     h, w = arr.shape
-    return (arr.reshape(h//nrows, nrows, -1, ncols)
+    blocks = (arr.reshape(h//nrows, nrows, -1, ncols)
                .swapaxes(1, 2)
                .reshape(-1, nrows, ncols))
+
+    return np.float32(blocks)
 
 
 def rebuild_image(arr, original_image_shape):
@@ -22,6 +26,8 @@ def rebuild_image(arr, original_image_shape):
     """
     h, w = original_image_shape
     n, nrows, ncols = arr.shape
-    return (arr.reshape(h//nrows, -1, nrows, ncols)
+    img =  (arr.reshape(h//nrows, -1, nrows, ncols)
                .swapaxes(1, 2)
                .reshape(h, w))
+
+    return np.uint8(img)

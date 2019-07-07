@@ -22,6 +22,12 @@ cb_blocks = reshape.divide_image(downsampled_cb, 8, 8)
 # TODO Adicionar tratamento para divisão de imagens não múltiplas de 8.
 # TODO Levar em consideração o downsample com todos os fatores
 
+# This step reduces the dynamic range requirements in the DCT processing stage that follows.
+# y_shifted_blocks = y_blocks - 128
+# cr_shifted_blocks = cr_blocks - 128
+# cb_shifted_blocks = cb_blocks - 128
+
+
 y_dct_blocks, cr_dct_blocks, cb_dct_blocks = dct.dct_from_ycrcb_blocks(y_blocks, cr_blocks, cb_blocks)
 
 
@@ -29,6 +35,11 @@ y_dct_blocks, cr_dct_blocks, cb_dct_blocks = dct.dct_from_ycrcb_blocks(y_blocks,
 # https://en.wikipedia.org/wiki/Quantization_(image_processing)#Quantization_matrices
 
 y_idct_blocks, cr_idct_blocks, cb_idct_blocks = dct.idct_from_ycrcb_dct_blocks(y_dct_blocks, cr_dct_blocks, cb_dct_blocks)
+
+
+# y_unshifted_blocks = y_blocks + 128
+# cr_unshifted_blocks = cr_blocks + 128
+# cb_unshifted_blocks = cb_blocks + 128
 
 
 y_idct_image = reshape.rebuild_image(y_idct_blocks, original_image_shape)

@@ -12,8 +12,8 @@ def dct_from_blocks(image_blocks):
     dct_blocks = []
 
     for block in image_blocks:
-        imf = np.float32(block)/255.0  # float conversion/scale
-        dct_blocks.append(cv2.dct(imf))
+        scale = block/255.0  # conversion/scale
+        dct_blocks.append(cv2.dct(scale))
 
     return dct_blocks
 
@@ -29,6 +29,6 @@ def idct_from_blocks(dct_blocks):
 
     for block in dct_blocks:
         idct_block = cv2.idct(block)
-        idct_blocks.append(np.uint8((idct_block * 255.0)))  # convert back
+        idct_blocks.append(idct_block * 255.0)  # scale back
 
     return idct_blocks
