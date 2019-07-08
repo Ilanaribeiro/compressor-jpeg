@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
-import matplotlib.cm as cm
+
 
 
 img1 = cv2.imread("dog.jpeg",0)
