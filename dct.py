@@ -15,7 +15,7 @@ def dct_from_blocks(image_blocks):
         scale = block/255.0  # conversion/scale
         dct_blocks.append(cv2.dct(scale))
 
-    return dct_blocks
+    return np.asarray(dct_blocks)
 
 
 def idct_from_ycrcb_dct_blocks(yblocks, cr_blocks, cb_blocks):
@@ -31,4 +31,4 @@ def idct_from_blocks(dct_blocks):
         idct_block = cv2.idct(block)
         idct_blocks.append(idct_block * 255.0)  # scale back
 
-    return idct_blocks
+    return np.asarray(idct_blocks)
