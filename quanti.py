@@ -1,27 +1,30 @@
-
-import numpy as np
 import cv2
-
-# Função: imread ( nome da imagem, [1=cor, 0=grayscape, -1=alpha])
-# Cada coluna da imagem é armazenada em um subvetor, onde cada coluna é uma posição
-img = cv2.imread('wom.jpeg', 0)
-
+import numpy as np
+from matplotlib import pyplot as plt
+import matplotlib.cm as cm
 
 
-## Quantização ##
-# 255 / 31 = 8,22...
-# Assim, teremos uma imagem com 8 tons de cinza. A conta é feita desta forma para descartar a parte decimal dos números e alterar o vetor para que possua apenas 8 valores possíveis.
-r = 31
-img = np.uint8(img / r) * r
+img1 = cv2.imread("dog.jpeg",0)
+imgSize = img1.shape
+ImgQuantizada = np.zeros(imgSize)
+i= np.array(img1)
 
-# Salvar imagem no disco #
-#cv2.imwrite('C:/Diretório', img_aum)
+             
+Quant=np.array([[16,11,10,16,24,40,51,61],
+                         [12,12,14,19,26,48,60,55],
+                         [14,13,16,24,40,57,69,56],
+                         [14,17,22,29,51,87,80,62],
+                         [18,22,37,56,68,109,103,77],
+                         [24,35,55,64,81,104,113,92],
+                         [49,64,78,87,103,121,120,101],
+                         [72,92,95,98,112,100,103,99]])
 
-# Mostra uma imagem
-# Função: cv.imshow(nome da janela, matriz)
-cv2.imshow('Quantizada',img)
+for x in range(0, imgSize[0], 8): 
+        for y in range(0, imgSize[1], 8): 
+                ImgQuantizada[x:(x + 8), y:(y + 8)] = i[x:(x + 8), y:(y + 8)]//Quant
 
 
-# Funções para o funcionamento correto do python no Windows.
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+print(ImgQuantizada)
+
+cv2.imshow('', ImgQuantizada) 
+cv2.waitKey()
