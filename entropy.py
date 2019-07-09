@@ -40,3 +40,8 @@ def get_symbols(ordered_list):
 
     symbols.append((0, 0)) # EOB
     return symbols
+
+
+def get_DC_coefficients(ordered_list):
+    ac_list = ordered_list.copy()
+    return ac_list.pop(0) # Remove DC coefficient from list - first item
