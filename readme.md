@@ -1,4 +1,4 @@
-### Passo a passo pra rodar essa prezepada
+### Passo a passo pra rodar o projeto
 
 #### Clonando o projeto
 
